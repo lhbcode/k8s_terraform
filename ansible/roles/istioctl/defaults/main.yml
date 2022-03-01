@@ -1,0 +1,7 @@
+---
+# defaults file for istioctl
+istio_version: 1.12.1 
+istio_arch: "x86_64"
+istio_home_dir: /home/ubuntu/
+istio_install_dir: /home/ubuntu/istio-{{ istio_version }}/
+

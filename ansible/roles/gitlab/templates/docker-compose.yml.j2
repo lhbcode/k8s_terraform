@@ -1,0 +1,19 @@
+version: '3.6'
+services:
+  web:
+    image: '{{ gitlab_image }}'
+    restart: {{ gitlab_docker_restart_role }}
+    hostname: '{{ gitlab_domain }}'
+    environment:
+      GITLAB_OMNIBUS_CONFIG: |
+        external_url 'http://{{ gitlab_domain }}'
+        gitlab_rails['gitlab_shell_ssh_port'] = {{ gitlab_shell_ssh_port }}
+      GITLAB_ROOT_PASSWORD: {{ gitlab_pwd }}
+    ports:
+      - '{{ gitlab_http_port }}:80'
+      - '{{ gitlab_shell_ssh_port }}:22'
+      - '{{ gitlab_https_port }}:443'
+    volumes:
+      - '{{ gitlab_host_volumes_mount }}/config:/etc/gitlab'
+      - '{{ gitlab_host_volumes_mount }}/logs:/var/log/gitlab'
+      - '{{ gitlab_host_volumes_mount }}/data:/var/opt/gitlab'

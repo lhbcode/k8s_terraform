@@ -1,0 +1,14 @@
+    [bastion] 
+    3.104.65.0 
+    [master] 
+    10.10.5.201 
+    [worker] 
+    10.10.5.92
+    10.10.6.169
+    10.10.4.39
+    [harbor]
+    3.26.235.165 
+ 
+    [all:vars] 
+    ansible_user=ubuntu 
+    ansible_ssh_private_key_file=private-key.pem 

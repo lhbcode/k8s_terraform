@@ -1,0 +1,27 @@
+---
+- name: Check that the somefile.conf exists
+  stat:
+    path: "{{ harbor_install_dir  }}{{ harbor_install_file }}"
+  register: stat_result
+
+- name: Download file with harbor_install 
+  get_url:
+    url: "{{ harbor_install_url }}"
+    dest: "{{ harbor_install_dir  }}"
+  when: stat_result.stat.exists == False
+   
+- name: unarchiver harbor_install_file 
+  shell: tar -zxf "{{ harbor_install_file }}" 
+  args:
+    chdir: "{{ harbor_install_dir  }}"
+
+- name: upload harbor.yml from template
+  template: 
+    src: harbor.yml.j2
+    dest: '{{ harbor_install_dir }}/harbor/harbor.yml'
+
+- name: harbor start 
+  shell: "{{ harbor_install_dir }}/harbor/./install.sh" 
+  args:
+    chdir: "{{ harbor_install_dir  }}harbor/"
+

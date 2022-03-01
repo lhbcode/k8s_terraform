@@ -1,0 +1,10 @@
+---
+mongo_image: docker.io/bitnami/mongodb:{{ mongo_db_version }}
+mongo_ex_port: 27017 
+mongo_in_port: 27017 
+mongo_db_version: 4.4
+mongo_install_dir: /home/ubuntu
+
+# mount 
+mongo_host_dir: mongodb_data 
+mongo_docker_dir: /bitnami/mongodb

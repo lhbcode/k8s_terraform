@@ -1,0 +1,13 @@
+version: '2'
+
+services:
+  mongodb:
+    image: {{ mongo_image }}
+    ports:
+      - "{{ mongo_ex_port }}:{{ mongo_in_port }}"
+    volumes:
+      - '{{ mongo_host_dir }}:{{ mongo_docker_dir }}'
+
+volumes:
+  mongodb_data:
+    driver: local

@@ -1,0 +1,13 @@
+---
+- name: upload gitlab docker-compose.yml from template
+  template: 
+    src: docker-compose.yml.j2
+    dest: '{{ gitlab_install_dir }}/docker-compose.yml'
+
+- name: gitlab start 
+  shell: "docker-compose up -d" 
+  args:
+    chdir: "{{ gitlab_install_dir  }}"
+  register: gitstart_info_output
+- debug: msg="{{ gitstart_info_output.stdout }}"
+

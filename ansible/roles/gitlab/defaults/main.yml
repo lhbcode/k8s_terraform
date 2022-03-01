@@ -1,0 +1,16 @@
+---
+# defaults file for gitlab
+# gitlab image 
+gitlab_image: gitlab/gitlab-ce:latest
+gitlab_install_dir: /home/ubuntu
+
+# gitlab config 
+gitlab_domain: gitlab.com
+gitlab_http_port: 8080 
+gitlab_https_port: 443
+gitlab_shell_ssh_port: 2222 
+gitlab_pwd: admin1234
+
+# gitlab docker config 
+gitlab_docker_restart_role: always
+gitlab_host_volumes_mount: /srv/gitlab

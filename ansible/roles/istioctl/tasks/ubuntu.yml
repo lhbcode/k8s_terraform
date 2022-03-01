@@ -1,0 +1,30 @@
+- name: Run the equivalent of "apt-get update" as a separate step
+  become: true
+  apt:
+    update_cache: yes
+
+- name: Check that the istioctl_dir exists
+  stat:
+    path: "{{ istio_install_dir  }}"
+  register: stat_result
+
+- name: download istioctl - 1  
+  shell: curl -L https://istio.io/downloadIstio | ISTIO_VERSION={{ istio_version }} TARGET_ARCH={{ istio_arch }} sh -
+  args:
+    chdir: "{{ istio_home_dir  }}"
+  when: stat_result.stat.exists == False 
+
+- name: download istioctl - 2 
+  shell: | 
+    export PATH=$PWD/bin:$PATH 
+    istioctl install --set profile=demo -y
+  args: 
+    chdir: "{{ istio_install_dir }}"
+
+
+
+
+
+
+
+

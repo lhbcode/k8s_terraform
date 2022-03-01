@@ -1,0 +1,13 @@
+---
+- name: Run the equivalent of "apt-get update" as a separate step
+  become: true
+  apt:
+    update_cache: yes
+  
+- name: Install a list of packages
+  become: true
+  apt:
+    pkg:
+    - unzip
+    - net-tools
+
