@@ -14,12 +14,14 @@
     chdir: "{{ istio_home_dir  }}"
   when: stat_result.stat.exists == False 
 
-- name: download istioctl - 2 
-  shell: | 
-    export PATH=$PWD/bin:$PATH 
-    istioctl install --set profile=demo -y
-  args: 
-    chdir: "{{ istio_install_dir }}"
+- name: deploy_istio | Copy 'istioctl' to the 'bin' directory
+  copy:
+    src: "{{ istio_install_dir }}/bin/istioctl"
+    dest: "/usr/local/bin/istioctl"
+    remote_src: yes
+    mode: 0775
+    force: yes
+  become: yes
 
 
 

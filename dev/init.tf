@@ -1,3 +1,11 @@
+terraform {
+  required_providers {
+    aws = {
+      version = "~> 3.74"
+      source = "hashicorp/aws"
+    }
+  }
+}
 provider "aws" {
   region = "ap-southeast-2" # Please use the default region ID
 }
