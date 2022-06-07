@@ -73,5 +73,6 @@ sudo hostnamectl set-hostname "$hostname_ip.$region.compute.internal"
 
 sed -i "s/test/$hostname_ip.$region.compute.internal/g" /tmp/join.yml
 
-
+sudo rm -rf /etc/containerd/config.toml
+sudo systemctl restart containerd
 sudo kubeadm join --config /tmp/join.yml 
