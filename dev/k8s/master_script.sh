@@ -90,7 +90,8 @@ controllerManager:
     cloud-provider: "aws"
 EOF
 
-
+sudo rm -rf /etc/containerd/config.toml
+sudo systemctl restart containerd
 sudo kubeadm init --config /tmp/config.yml | tee /tmp/output
 
 
@@ -110,6 +111,8 @@ done
 
 hash=`cat /tmp/output | grep sha256 | awk '{print $2}'`
 token=`cat /tmp/output | grep 'kubeadm join' | awk '{print $5}'`
+
+
 
 cat > /tmp/join.yml <<EOF
 apiVersion: kubeadm.k8s.io/v1beta2
