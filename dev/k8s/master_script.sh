@@ -4,29 +4,33 @@ sudo apt-get update
 sudo apt-get install 
 
 
-# apt가 HTTPS로 리포지터리를 사용하는 것을 허용하기 위한 패키지 설치
-sudo apt-get update && sudo apt-get install -y apt-transport-https ca-certificates curl software-properties-common gnupg2
+sudo apt-get update
+sudo apt-get install \
+    ca-certificates \
+    curl \
+    gnupg \
+    lsb-release -y
 
-# 도커 공식 GPG 키 추가:
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key --keyring /etc/apt/trusted.gpg.d/docker.gpg add -
+sudo mkdir -p /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
 
-# 도커 apt 리포지터리 추가:
-sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+echo \
+"deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+$(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 
-# 도커 CE 설치
-sudo apt-get update && sudo apt-get install -y containerd.io=1.2.13-2 docker-ce=5:19.03.11~3-0~ubuntu-$(lsb_release -cs) docker-ce-cli=5:19.03.11~3-0~ubuntu-$(lsb_release -cs)
+sudo apt-get update
+sudo apt-get install docker-ce docker-ce-cli containerd.io docker-compose-plugin -y
 
+# 도커 컴포즈 설치 
+sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
 ## /etc/docker 생성
 sudo mkdir /etc/docker
 
 # 도커 데몬 설정
 cat <<EOF | sudo tee /etc/docker/daemon.json
 {
-  "exec-opts": ["native.cgroupdriver=systemd"],
-  "log-driver": "json-file",
-  "log-opts": {
-    "max-size": "100m"
-  },
+  "dns": ["8.8.8.8"],
   "storage-driver": "overlay2"
 }
 EOF
@@ -73,13 +77,13 @@ sudo hostnamectl set-hostname "$hostname_ip.$region.compute.internal"
 kube_version=`kubelet --version | awk '{print $2}'`
 
 cat > /tmp/config.yml <<EOF
-apiVersion: kubeadm.k8s.io/v1beta2
+apiVersion: kubeadm.k8s.io/v1beta3
 kind: InitConfiguration
 nodeRegistration:
   kubeletExtraArgs:
     cloud-provider: "aws"
 ---
-apiVersion: kubeadm.k8s.io/v1beta2
+apiVersion: kubeadm.k8s.io/v1beta3
 kind: ClusterConfiguration
 kubernetesVersion: $kube_version
 apiServer:
@@ -92,6 +96,7 @@ EOF
 
 sudo rm -rf /etc/containerd/config.toml
 sudo systemctl restart containerd
+
 sudo kubeadm init --config /tmp/config.yml | tee /tmp/output
 
 
@@ -112,10 +117,8 @@ done
 hash=`cat /tmp/output | grep sha256 | awk '{print $2}'`
 token=`cat /tmp/output | grep 'kubeadm join' | awk '{print $5}'`
 
-
-
 cat > /tmp/join.yml <<EOF
-apiVersion: kubeadm.k8s.io/v1beta2
+apiVersion: kubeadm.k8s.io/v1beta3
 kind: JoinConfiguration
 discovery:
   bootstrapToken:
